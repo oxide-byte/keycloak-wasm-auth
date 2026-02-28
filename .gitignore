@@ -4,3 +4,5 @@
 
 # Builds
 /target
+/samples/keycloak-csr-leptos/target
+/samples/keycloak-csr-leptos/dist

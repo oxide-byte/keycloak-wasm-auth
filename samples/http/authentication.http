@@ -1,0 +1,18 @@
+### REALM Description
+
+http://localhost:8888/realms/hackandlearn/.well-known/openid-configuration
+
+### GET PUBLIC KEYS
+
+GET http://localhost:8888/realms/hackandlearn/
+
+### GET CERTIFICAT
+
+GET http://localhost:8888/realms/hackandlearn/protocol/openid-connect/certs
+
+### CONNECT User (Evaluate token with: https://jwt.io/ )
+
+POST http://localhost:8888/realms/hackandlearn/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=hackandlearn-client&username=user@demo.com&password=password&grant_type=password
