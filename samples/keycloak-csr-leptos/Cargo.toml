@@ -5,6 +5,11 @@ edition = "2024"
 
 [dependencies]
 leptos = { version = "0.8.14", features = ["csr"] }
+reactive_stores = { version = "0.3.1" }
+
+keycloak-wasm-auth = { git = "https://github.com/oxide-byte/keycloak-wasm-auth" }
+uuid = { version = "1.21.0", features = ["v4", "js"] }
+
 wasm-bindgen-test = "0.3.50"
 wasm-tracing = "2.1.0"
 wasm-bindgen = "0.2.100"
