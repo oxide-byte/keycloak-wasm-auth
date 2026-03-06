@@ -1,3 +1,10 @@
+[workspace]
+members = [
+    ".",
+    "samples/keycloak-csr-leptos",
+    "samples/wasm-wrapper",
+]
+
 [package]
 name = "keycloak-wasm-auth"
 version = "0.1.0"
@@ -47,3 +54,6 @@ urlencoding = "2.1"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+[profile.release]
+lto = true
+opt-level = "s"

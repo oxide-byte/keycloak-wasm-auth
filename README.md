@@ -6,4 +6,14 @@ Currently there are a couple of libraries already existing on the crates.io. One
 
 And this was one of my first motivations. I apply Leptos currently in CSR and generated a special Use Case to communicate in GraphQL (https://github.com/oxide-byte/rust-berlin-leptos). And for doing my tasks, I had started to build this module and extracted it now here.
 
+## React-JS
+
+A sample to implement the Rust-WASM with a Wrapper in an React-JS application:
+
+samples/keycloak-react
+
+The build can be found under:
+
+samples/wasm-wrapper/README.md
+
 ## There will be more soon...

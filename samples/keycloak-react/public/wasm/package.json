@@ -1,0 +1,13 @@
+{
+  "name": "keycloak-wasm-wrapper",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "keycloak_wasm_wrapper_bg.wasm",
+    "keycloak_wasm_wrapper.js"
+  ],
+  "main": "keycloak_wasm_wrapper.js",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
