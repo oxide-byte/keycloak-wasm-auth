@@ -65,3 +65,35 @@ impl LoginParams {
         self
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LogoutParams {
+    /// KeyCloak issuer URL
+    pub issuer: String,
+
+    /// Redirect URI after logout (optional)
+    pub post_logout_redirect_uri: Option<String>,
+
+    /// ID Token hint (recommended)
+    pub id_token_hint: Option<String>,
+}
+
+impl LogoutParams {
+    pub fn new(issuer: String) -> Self {
+        Self {
+            issuer,
+            post_logout_redirect_uri: None,
+            id_token_hint: None,
+        }
+    }
+
+    pub fn with_post_logout_redirect_uri(mut self, uri: String) -> Self {
+        self.post_logout_redirect_uri = Some(uri);
+        self
+    }
+
+    pub fn with_id_token_hint(mut self, token: String) -> Self {
+        self.id_token_hint = Some(token);
+        self
+    }
+}

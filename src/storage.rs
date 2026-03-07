@@ -93,6 +93,37 @@ pub fn store_token(token: &str) -> Result<(), AuthError> {
     Ok(())
 }
 
+/// Store ID token in browser's sessionStorage
+pub fn store_id_token(token: &str) -> Result<(), AuthError> {
+    let window = window().ok_or_else(|| AuthError::StorageError("No window object".to_string()))?;
+
+    let storage = window
+        .session_storage()
+        .map_err(|_| AuthError::StorageError("Failed to access sessionStorage".to_string()))?
+        .ok_or_else(|| AuthError::StorageError("sessionStorage not available".to_string()))?;
+
+    storage
+        .set_item("keycloak_id_token", token)
+        .map_err(|_| AuthError::StorageError("Failed to store ID token".to_string()))?;
+
+    Ok(())
+}
+
+/// Retrieve ID token from browser's sessionStorage
+pub fn retrieve_id_token() -> Result<String, AuthError> {
+    let window = window().ok_or_else(|| AuthError::StorageError("No window object".to_string()))?;
+
+    let storage = window
+        .session_storage()
+        .map_err(|_| AuthError::StorageError("Failed to access sessionStorage".to_string()))?
+        .ok_or_else(|| AuthError::StorageError("sessionStorage not available".to_string()))?;
+
+    storage
+        .get_item("keycloak_id_token")
+        .map_err(|_| AuthError::StorageError("Failed to retrieve ID token".to_string()))?
+        .ok_or_else(|| AuthError::StorageError("No ID token found".to_string()))
+}
+
 /// Retrieve token from browser's sessionStorage
 pub fn retrieve_token() -> Result<String, AuthError> {
     let window = window().ok_or_else(|| AuthError::StorageError("No window object".to_string()))?;
@@ -120,6 +151,10 @@ pub fn clear_auth_data() -> Result<(), AuthError> {
     storage
         .remove_item("keycloak_access_token")
         .map_err(|_| AuthError::StorageError("Failed to clear token".to_string()))?;
+
+    storage
+        .remove_item("keycloak_id_token")
+        .map_err(|_| AuthError::StorageError("Failed to clear ID token".to_string()))?;
 
     storage
         .remove_item(PKCE_STATE_KEY)

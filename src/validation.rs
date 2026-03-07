@@ -7,11 +7,13 @@ use wasm_bindgen_futures::JsFuture;
 
 /// JWKS (JSON Web Key Set) response structure
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct JwksResponse {
     keys: Vec<JwkKey>,
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct JwkKey {
     kty: String,
     #[serde(rename = "use")]
@@ -25,6 +27,7 @@ struct JwkKey {
 }
 
 /// Fetch JWKS from the KeyCloak server
+#[allow(dead_code)]
 async fn fetch_jwks(jwks_uri: &str) -> Result<Vec<JwkKey>, AuthError> {
     let window = web_sys::window().ok_or_else(|| AuthError::NetworkError("No window object".to_string()))?;
 
@@ -70,6 +73,7 @@ async fn fetch_jwks(jwks_uri: &str) -> Result<Vec<JwkKey>, AuthError> {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct JwtHeader {
     pub(crate) alg: String,
     pub(crate) kid: Option<String>,

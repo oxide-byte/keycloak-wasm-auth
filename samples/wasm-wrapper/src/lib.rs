@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use keycloak_wasm_auth::{LoginParams, Challenge, login, handle_redirect_callback};
+use keycloak_wasm_auth::{LoginParams, LogoutParams, Challenge, login, logout, handle_redirect_callback};
 use wasm_bindgen_futures::JsFuture;
 
 #[wasm_bindgen]
@@ -63,6 +63,45 @@ pub async fn wasm_handle_redirect_callback(params: JsLoginParams) -> Result<JsVa
         Err(e) => {
             // Return error if token exchange failed
             Err(JsValue::from_str(&format!("Callback handling failed: {}", e)))
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub struct JsLogoutParams {
+    inner: LogoutParams,
+}
+
+#[wasm_bindgen]
+impl JsLogoutParams {
+    #[wasm_bindgen(constructor)]
+    pub fn new(issuer: String) -> JsLogoutParams {
+        let params = LogoutParams::new(issuer);
+        JsLogoutParams { inner: params }
+    }
+
+    #[wasm_bindgen]
+    pub fn with_post_logout_redirect_uri(&mut self, uri: String) {
+        self.inner = self.inner.clone().with_post_logout_redirect_uri(uri);
+    }
+
+    #[wasm_bindgen]
+    pub fn with_id_token_hint(&mut self, token: String) {
+        self.inner = self.inner.clone().with_id_token_hint(token);
+    }
+}
+
+#[wasm_bindgen]
+pub async fn wasm_logout(params: JsLogoutParams) -> Result<JsValue, JsValue> {
+    // Call the logout function which will redirect to Keycloak logout page
+    let result = logout(params.inner).await;
+    
+    match result {
+        Ok(_) => {
+            Ok(JsValue::from_str("Logout initiated successfully"))
+        },
+        Err(e) => {
+            Err(JsValue::from_str(&format!("Logout failed: {}", e)))
         }
     }
 }

@@ -16,4 +16,32 @@ The build can be found under:
 
 samples/wasm-wrapper/README.md
 
+## Quickstart
+
+From the samples:
+
+Starting Docker-Compose
+
+```shell
+docker compose -f samples/docker/demo_hnl/docker-compose.yaml up
+```
+
+Starting React-JS
+
+```shell
+cd samples/keycloak-react
+npm run dev
+```
+
+Starting Leptos
+
+```shell
+cd samples/keycloak-csr-leptos
+trunk serve --port 8080
+```
+
+**Attention**
+
+Leptos and React-JS cannot run in the same time, they share the port 8080 for the application
+
 ## There will be more soon...

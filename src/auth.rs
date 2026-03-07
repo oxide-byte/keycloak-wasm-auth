@@ -1,12 +1,12 @@
 use crate::{
-    storage::{retrieve_pkce_state, store_pkce_state, store_token, clear_auth_data},
+    storage::{retrieve_pkce_state, store_pkce_state, store_token, store_id_token, clear_auth_data},
     validation::validate_and_extract_claims,
-    AuthError, Claims, LoginParams, TokenResponse,
+    AuthError, Claims, LoginParams, LogoutParams, TokenResponse,
 };
 use url::Url;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{window, Storage};
+use web_sys::window;
 
 /// Build the OAuth 2.0 authorization URL with PKCE parameters
 pub(crate) fn build_authorization_url(
@@ -34,9 +34,42 @@ pub(crate) fn build_authorization_url(
     Ok(url.to_string())
 }
 
-pub fn logout() -> Result<(), AuthError> {
+pub async fn logout(params: LogoutParams) -> Result<(), AuthError> {
     web_sys::console::log_1(&"[KeyCloak Auth] logout() function called".into());
-    clear_auth_data()
+
+    // 1. Clear local auth data
+    clear_auth_data()?;
+
+    // 2. Fetch OIDC configuration to get the end_session_endpoint
+    let oidc_config = crate::oidc::fetch_oidc_config(&params.issuer).await?;
+
+    if let Some(end_session_endpoint) = oidc_config.end_session_endpoint {
+        let mut url = Url::parse(&end_session_endpoint)
+            .map_err(|e| AuthError::InvalidParameter(format!("Invalid end_session_endpoint: {}", e)))?;
+
+        // 3. Add parameters for RP-Initiated Logout
+        if let Some(redirect_uri) = params.post_logout_redirect_uri {
+            url.query_pairs_mut().append_pair("post_logout_redirect_uri", &redirect_uri);
+        }
+
+        if let Some(token_hint) = params.id_token_hint {
+            url.query_pairs_mut().append_pair("id_token_hint", &token_hint);
+        }
+
+        // 4. Redirect to Keycloak logout page
+        let window = window().ok_or_else(|| AuthError::OAuthError("No window object".to_string()))?;
+        let location = window.location();
+
+        web_sys::console::log_1(&format!("[KeyCloak Auth] 🚀 REDIRECTING TO LOGOUT: {}", url).into());
+
+        location
+            .set_href(url.as_str())
+            .map_err(|e| AuthError::OAuthError(format!("Failed to redirect to logout: {:?}", e)))?;
+    } else {
+        web_sys::console::log_1(&"[KeyCloak Auth] ⚠️ No end_session_endpoint found in OIDC config. Only local logout performed.".into());
+    }
+
+    Ok(())
 }
 
 /// Initiate the OAuth login flow
@@ -147,6 +180,11 @@ pub async fn handle_redirect_callback(params: LoginParams) -> Result<String, Aut
 
     // Store access token
     store_token(&token_response.access_token)?;
+
+    // Store ID token if present
+    if let Some(id_token) = &token_response.id_token {
+        store_id_token(id_token)?;
+    }
 
     // Return the access token (or id_token if you prefer)
     Ok(token_response.access_token)

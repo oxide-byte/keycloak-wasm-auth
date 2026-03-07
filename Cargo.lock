@@ -804,7 +804,7 @@ dependencies = [
 name = "keycloak-csr-leptos"
 version = "0.1.0"
 dependencies = [
- "keycloak-wasm-auth 0.1.0 (git+https://github.com/oxide-byte/keycloak-wasm-auth)",
+ "keycloak-wasm-auth",
  "leptos",
  "reactive_stores 0.3.1",
  "uuid",
@@ -835,32 +835,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "keycloak-wasm-auth"
-version = "0.1.0"
-source = "git+https://github.com/oxide-byte/keycloak-wasm-auth#77f883c099f63a8ecbf20b34e968782feec5b646"
-dependencies = [
- "base64",
- "getrandom 0.2.17",
- "js-sys",
- "serde",
- "serde-wasm-bindgen",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "url",
- "urlencoding",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
 name = "keycloak-wasm-wrapper"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
- "keycloak-wasm-auth 0.1.0",
+ "keycloak-wasm-auth",
  "serde",
  "serde-wasm-bindgen",
  "wasm-bindgen",
